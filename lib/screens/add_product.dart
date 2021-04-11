@@ -14,6 +14,7 @@ class _AddProductState extends State<AddProduct> {
   BrandService _brandService = BrandService();
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController productNameController = TextEditingController();
+  TextEditingController quantityController = TextEditingController();
   List<DocumentSnapshot> brands = <DocumentSnapshot>[];
   List<DocumentSnapshot> categories = <DocumentSnapshot>[];
   List<DropdownMenuItem<String>> categoriesDropDown =
@@ -29,22 +30,35 @@ class _AddProductState extends State<AddProduct> {
   @override
   void initState() {
     _getCategories();
-//    _getBrands();
-    categoriesDropDown = getCategoriesDropdown();
+    _getBrands();
   }
 
-  getCategoriesDropdown() {
+  List<DropdownMenuItem<String>> getCategoriesDropdown() {
     List<DropdownMenuItem<String>> items = new List();
     for (int i = 0; i < categories.length; i++) {
       setState(() {
-        categoriesDropDown.insert(
+        items.insert(
             0,
             DropdownMenuItem(
-                child: Text(categories[i]['category']),
-                value: categories[i]['category']));
+                child: Text(categories[i].data()['category']),
+                value: categories[i].data()['category']));
       });
     }
-    print(items.length);
+    return items;
+  }
+
+  List<DropdownMenuItem<String>> getBrandsDropdown() {
+    List<DropdownMenuItem<String>> items = new List();
+    for (int i = 0; i < brands.length; i++) {
+      setState(() {
+        items.insert(
+            0,
+            DropdownMenuItem(
+                child: Text(brands[i].data()['brand']),
+                value: brands[i].data()['brand']));
+      });
+    }
+    return items;
   }
 
   @override
@@ -147,9 +161,54 @@ class _AddProductState extends State<AddProduct> {
                 ),
               ),
 
-//              select category
+              //   select category
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Kategori:',
+                      style: TextStyle(color: red),
+                    ),
+                  ),
+                  DropdownButton(
+                    items: categoriesDropDown,
+                    onChanged: changeSelectedCategory,
+                    value: _currentCategory,
+                  ),
+                ],
+              ),
 
 //            select brand
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Marka:    ',
+                      style: TextStyle(color: red),
+                    ),
+                  ),
+                  DropdownButton(
+                    items: brandsDropDown,
+                    onChanged: changeSelectedBrand,
+                    value: _currentBrand,
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: TextFormField(
+                  controller: quantityController,
+                  decoration: InputDecoration(hintText: 'Adet'),
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Adet giriniz!';
+                    }
+                  },
+                ),
+              ),
 
               FlatButton(
                 color: red,
@@ -169,11 +228,26 @@ class _AddProductState extends State<AddProduct> {
     print(data.length);
     setState(() {
       categories = data;
-      print(categories.length);
+      categoriesDropDown = getCategoriesDropdown();
+      _currentCategory = categories[0].data()['category'];
+    });
+  }
+
+  _getBrands() async {
+    List<DocumentSnapshot> data = await _brandService.getBrands();
+    print(data.length);
+    setState(() {
+      brands = data;
+      brandsDropDown = getBrandsDropdown();
+      _currentBrand = brands[0].data()['brand'];
     });
   }
 
   changeSelectedCategory(String selectedCategory) {
     setState(() => _currentCategory = selectedCategory);
+  }
+
+  changeSelectedBrand(String selectedBrand) {
+    setState(() => _currentBrand = selectedBrand);
   }
 }
