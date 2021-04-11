@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_picker/image_picker.dart';
 import '../db/category.dart';
 import '../db/brand.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -26,6 +29,9 @@ class _AddProductState extends State<AddProduct> {
   Color black = Colors.black;
   Color grey = Colors.grey;
   Color red = Colors.red;
+  File _image1;
+  File _image2;
+  File _image3;
 
   @override
   void initState() {
@@ -87,16 +93,30 @@ class _AddProductState extends State<AddProduct> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: OutlineButton(
+                          borderSide: BorderSide(
+                              color: grey.withOpacity(0.5), width: 2.5),
+                          onPressed: () {
+                            _selectImage(
+                                ImagePicker.pickImage(
+                                    source: ImageSource.gallery),
+                                1);
+                          },
+                          child: _displayChild1()),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: OutlineButton(
                         borderSide: BorderSide(
                             color: grey.withOpacity(0.5), width: 2.5),
-                        onPressed: () {},
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(14, 70, 14, 70),
-                          child: new Icon(
-                            Icons.add,
-                            color: grey,
-                          ),
-                        ),
+                        onPressed: () {
+                          _selectImage(
+                              ImagePicker.pickImage(
+                                  source: ImageSource.gallery),
+                              2);
+                        },
+                        child: _displayChild2(),
                       ),
                     ),
                   ),
@@ -106,31 +126,13 @@ class _AddProductState extends State<AddProduct> {
                       child: OutlineButton(
                         borderSide: BorderSide(
                             color: grey.withOpacity(0.5), width: 2.5),
-                        onPressed: () {},
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(14, 70, 14, 70),
-                          child: new Icon(
-                            Icons.add,
-                            color: grey,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: OutlineButton(
-                        borderSide: BorderSide(
-                            color: grey.withOpacity(0.5), width: 2.5),
-                        onPressed: () {},
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(14, 70, 14, 70),
-                          child: new Icon(
-                            Icons.add,
-                            color: grey,
-                          ),
-                        ),
+                        onPressed: () {
+                          _selectImage(
+                              ImagePicker.pickImage(
+                                  source: ImageSource.gallery),
+                              3);
+                        },
+                        child: _displayChild3(),
                       ),
                     ),
                   ),
@@ -179,7 +181,7 @@ class _AddProductState extends State<AddProduct> {
                 ],
               ),
 
-//            select brand
+              //            select brand
               Row(
                 children: [
                   Padding(
@@ -249,5 +251,65 @@ class _AddProductState extends State<AddProduct> {
 
   changeSelectedBrand(String selectedBrand) {
     setState(() => _currentBrand = selectedBrand);
+  }
+
+  void _selectImage(Future<File> pickImage, int imageNumber) async {
+    File tempImg = await pickImage;
+    switch (imageNumber) {
+      case 1:
+        setState(() => _image1 = tempImg);
+        break;
+      case 2:
+        setState(() => _image2 = tempImg);
+        break;
+      case 3:
+        setState(() => _image3 = tempImg);
+        break;
+    }
+  }
+
+  Widget _displayChild1() {
+    if (_image1 == null) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(14, 70, 14, 70),
+        child: new Icon(Icons.add, color: grey),
+      );
+    } else {
+      return Image.file(
+        _image1,
+        fit: BoxFit.fill,
+        width: double.infinity,
+      );
+    }
+  }
+
+  Widget _displayChild2() {
+    if (_image2 == null) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(14, 70, 14, 70),
+        child: new Icon(Icons.add, color: grey),
+      );
+    } else {
+      return Image.file(
+        _image2,
+        fit: BoxFit.fill,
+        width: double.infinity,
+      );
+    }
+  }
+
+  Widget _displayChild3() {
+    if (_image3 == null) {
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(14, 70, 14, 70),
+        child: new Icon(Icons.add, color: grey),
+      );
+    } else {
+      return Image.file(
+        _image3,
+        fit: BoxFit.fill,
+        width: double.infinity,
+      );
+    }
   }
 }
