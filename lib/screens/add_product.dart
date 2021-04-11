@@ -1,11 +1,14 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import '../db/category.dart';
+
 import '../db/brand.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
+import '../db/category.dart';
 
 class AddProduct extends StatefulWidget {
   @override
@@ -216,7 +219,9 @@ class _AddProductState extends State<AddProduct> {
                 color: red,
                 textColor: white,
                 child: Text('add product'),
-                onPressed: () {},
+                onPressed: () {
+                  //validateAndUpload();
+                },
               )
             ],
           ),
@@ -312,4 +317,8 @@ class _AddProductState extends State<AddProduct> {
       );
     }
   }
+
+  // void validateAndUpload() async{
+
+  // }
 }
